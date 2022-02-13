@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import React from "react";
 
 const RenderChat = ({ chat, lastChatRef }) => {
     return chat.map(({ name, message }, index) => {
