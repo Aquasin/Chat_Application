@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Box,
@@ -11,6 +11,15 @@ import {
 
 const Login = ({ username, setUsername }) => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (localStorage.getItem("user")) {
+            setUsername(localStorage.getItem("user"));
+            navigate(`/chat/${localStorage.getItem("user")}`, {
+                replace: true,
+            });
+        }
+    }, []);
 
     const handleChange = (e) => {
         setUsername(e.target.value);

@@ -13,21 +13,58 @@ const Chat = ({ socket }) => {
     const lastChatRef = useRef(null);
 
     useEffect(() => {
-        socket.on("message", ({ name, message, userId }) => {
-            setChat((chat) => [...chat, { name, message, userId }]);
-            // To Scroll down the chat list
-            lastChatRef.current.scrollIntoView({
-                behavior: "smooth",
-            });
+        // isMounted variable declared so that this error (Can't perform a React state update on an unmounted component.This is a no-op, but it indicates a memory leak in your application.To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.) will be handled
+        let isMounted = true;
+        socket.on("userconnected", ({ name }) => {
+            if (isMounted) {
+                // console.log(`${name} joined lobby `);
+                const message = "connected";
+                setChat((chat) => [...chat, { name, message }]);
+            }
+        });
+        socket.on("userdisconnected", ({ name }) => {
+            if (isMounted) {
+                console.log(`${name} left lobby `);
+                const message = "disconnected";
+                setChat((chat) => [...chat, { name, message }]);
+            }
+        });
+        socket.on("message", ({ name, message }) => {
+            if (isMounted) {
+                setChat((chat) => [...chat, { name, message }]);
+                // To Scroll down the chat list
+                if (lastChatRef.current !== null) {
+                    // console.log(lastChatRef);
+                    lastChatRef.current.scrollIntoView({
+                        behavior: "smooth",
+                    });
+                }
+            }
         });
         socket.on("typing_start", ({ name }) => {
-            setCurrentTyping(name);
+            if (isMounted) {
+                setCurrentTyping(name);
+            }
         });
         socket.on("typing_stop", () => {
-            setCurrentTyping("");
+            if (isMounted) {
+                setCurrentTyping("");
+            }
         });
         // console.log("HI");
+        return () => {
+            isMounted = false;
+        };
     }, [socket]);
+
+    useEffect(() => {
+        const name = localStorage.getItem("user");
+        socket.emit("userconnected", { name });
+        // When user logs out
+        return () => {
+            socket.emit("userdisconnected", { name });
+        };
+    }, []);
 
     const login = () => {
         navigate("/", { replace: true });

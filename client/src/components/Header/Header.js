@@ -62,14 +62,12 @@ const Header = () => {
                             </Flex>
                         </MenuItem>
                         <MenuDivider></MenuDivider>
-                        <MenuItem>
+                        <MenuItem onClick={logOut}>
                             <Flex>
                                 <Box>
                                     <i className="fa-solid fa-right-from-bracket"></i>
                                 </Box>
-                                <Box onClick={logOut} marginLeft="0.5rem">
-                                    Log Out
-                                </Box>
+                                <Box marginLeft="0.5rem">Log Out</Box>
                             </Flex>
                         </MenuItem>
                     </MenuList>

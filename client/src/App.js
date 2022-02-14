@@ -6,7 +6,7 @@ import Chat from "./pages/Chat/Chat";
 import io from "socket.io-client";
 import "./App.css";
 
-const socket = io.connect("https://chat-backend-application.herokuapp.com/");
+const socket = io.connect(process.env.REACT_APP_SERVER_ORIGIN);
 
 function App() {
     const [username, setUsername] = useState("");

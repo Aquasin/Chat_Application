@@ -7,7 +7,7 @@
     "author": "Aquasin",
     "license": "MIT",
     "scripts": {
-        "start": "node index.js"
+        "start": "nodemon index.js"
     },
     "dependencies": {
         "express": "^4.17.2",

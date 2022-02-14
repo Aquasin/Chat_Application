@@ -12,7 +12,8 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: "https://chat-application-frontend.netlify.app",
+        origin: [process.env.CLIENT_ORIGIN],
+        methods: ["GET", "POST"],
     },
 });
 
@@ -20,7 +21,15 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
     // Logging socket ID
     console.log(socket.id);
-    const userId = socket.id;
+    // When user is connected
+    socket.on("userconnected", ({ name }) => {
+        socket.broadcast.emit("userconnected", { name });
+    });
+
+    // When user is disconnected
+    socket.on("userdisconnected", ({ name }) => {
+        socket.broadcast.emit("userdisconnected", { name });
+    });
 
     // When user starts typing
     socket.on("typing_start", ({ name }) => {
@@ -31,7 +40,7 @@ io.on("connection", (socket) => {
     socket.on("message", ({ name, message }) => {
         // User stops typing
         io.emit("typing_stop");
-        io.emit("message", { name, message, userId });
+        io.emit("message", { name, message });
     });
 });
 
